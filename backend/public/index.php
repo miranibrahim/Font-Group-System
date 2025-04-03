@@ -1,14 +1,12 @@
 <?php
-require_once __DIR__ . '/../app/Controllers/FontController.php';
+require_once __DIR__ . '/routes.php';
 
-$fontController = new FontController();
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, DELETE');
+header('Access-Control-Allow-Headers: Content-Type');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['upload'])) {
-    $fontController->uploadFont();
-} elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['list'])) {
-    $fontController->listFonts();
-} elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['delete'])) {
-    $fontController->deleteFont($_GET['id']);
-} else {
-    echo json_encode(['error' => 'Invalid request']);
-}
+// For debugging
+// echo "Request URI: " . $_SERVER['REQUEST_URI'] . "<br>";
+// echo "Request Method: " . $_SERVER['REQUEST_METHOD'] . "<br>";
+
+Router::dispatch($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
