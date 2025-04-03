@@ -15,19 +15,43 @@ class GroupController extends BaseController {
 
     public function createGroup() {
         $data = json_decode(file_get_contents("php://input"), true);
-        if (!isset($data['name']) || !isset($data['fonts']) || count($data['fonts']) < 2) {
-            $this->sendError("A group must have at least 2 fonts.");
+        
+        // Validate input data
+        if (!isset($data['name']) || empty($data['name'])) {
+            $this->sendError("Group name is required");
+            return;
         }
-
-        $this->groupModel->createGroup($data['name'], $data['fonts']);
-        $this->sendResponse(['success' => 'Font group created']);
+        
+        if (!isset($data['fonts']) || !is_array($data['fonts']) || count($data['fonts']) < 2) {
+            $this->sendError("A group must have at least 2 fonts");
+            return;
+        }
+        
+        // Check if all font IDs are numeric
+        foreach ($data['fonts'] as $fontId) {
+            if (!is_numeric($fontId)) {
+                $this->sendError("Invalid font ID format");
+                return;
+            }
+        }
+        
+        $result = $this->groupModel->createGroup($data['name'], $data['fonts']);
+        
+        if ($result['success']) {
+            $this->sendResponse(['success' => 'Font group created', 'id' => $result['id']]);
+        } else {
+            $this->sendError($result['error']);
+        }
     }
 
     public function deleteGroup($id) {
-        if ($this->groupModel->deleteGroup($id)) {
+
+        $result = $this->groupModel->deleteGroup($id);
+
+        if ($result) {
             $this->sendResponse(['success' => 'Font group deleted']);
         } else {
-            $this->sendError('Failed to delete font group');
+            $this->sendError('Failed to delete Font group or not Exist.');
         }
     }
 }

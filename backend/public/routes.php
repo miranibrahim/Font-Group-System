@@ -18,9 +18,6 @@ Router::delete('/delete-fonts/:id', function($params) use ($fontController) {
 
 Router::get('/groups', [$groupController, 'listGroups']);
 Router::post('/create-group', [$groupController, 'createGroup']);
-Router::get('/delete-group', function() use ($groupController) {
-    $groupController->deleteGroup($_GET['id']);
-});
 Router::delete('/delete-group/:id', function($params) use ($groupController) {
     $groupController->deleteGroup($params['id']);
 });

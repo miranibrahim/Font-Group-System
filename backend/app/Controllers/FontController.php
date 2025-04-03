@@ -10,7 +10,7 @@ class FontController extends BaseController {
     }
 
     public function listFonts() {
-        echo json_encode($this->fontModel->getAllFonts());
+        $this->sendResponse($this->fontModel->getAllFonts());
     }
 
     public function uploadFont() {
