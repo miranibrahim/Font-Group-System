@@ -4,8 +4,24 @@ require_once __DIR__ . '/../Core/Database.php';
 class Group extends Database {
     public function getAllGroups() {
         $stmt = $this->pdo->query("SELECT * FROM font_groups");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $groups = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+        foreach ($groups as &$group) {
+            $fontIds = json_decode($group['fonts'], true);
+            if (is_array($fontIds) && count($fontIds)) {
+                $placeholders = implode(',', array_fill(0, count($fontIds), '?'));
+                $fontStmt = $this->pdo->prepare("SELECT name FROM fonts WHERE id IN ($placeholders)");
+                $fontStmt->execute($fontIds);
+                $fontNames = $fontStmt->fetchAll(PDO::FETCH_COLUMN);
+                $group['font_names'] = $fontNames;
+            } else {
+                $group['font_names'] = [];
+            }
+        }
+    
+        return $groups;
     }
+    
 
     public function createGroup($name, $fonts) {
         // Check if group name already exists

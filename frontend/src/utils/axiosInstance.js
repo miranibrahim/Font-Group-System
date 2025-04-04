@@ -5,7 +5,7 @@ const axiosInstance = axios.create({
 });
 
 // General function for making GET requests
-export const fetchData = async (endpoint) => {
+export const getFonts = async (endpoint) => {
     try {
         console.log(`Fetching from: ${import.meta.env.VITE_API_BASE_URL}${endpoint}`);
         const response = await axiosInstance.get(endpoint);
@@ -17,7 +17,7 @@ export const fetchData = async (endpoint) => {
 };
 
 // General function for uploading files
-export const uploadFile = async (endpoint, formData) => {
+export const uploadFontFile = async (endpoint, formData) => {
     try {
         const response = await axiosInstance.post(endpoint, formData, {
             headers: { "Content-Type": "multipart/form-data" },
@@ -30,7 +30,7 @@ export const uploadFile = async (endpoint, formData) => {
 };
 
 // General function for making DELETE requests
-export const deleteData = async (endpoint) => {
+export const deleteFont = async (endpoint) => {
     try {
         const response = await axiosInstance.delete(endpoint);
         return response.data;
