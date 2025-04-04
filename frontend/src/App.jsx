@@ -1,7 +1,7 @@
 
 import './App.css'
-import FontGroupList from './Components/FontGroupList'
-import FontGroupForm from './Components/FontGroupForm'
+import FontGroupList from './Pages/GroupList'
+import FontGroupForm from './Pages/UploadFont'
 
 function App() {
 

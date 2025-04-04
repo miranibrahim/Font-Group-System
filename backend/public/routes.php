@@ -10,14 +10,14 @@ Router::get('/', function() {
     echo json_encode(['message' => 'Welcome to Font Group System API']);
 });
 
-Router::get('/fonts', [$fontController, 'listFonts']);
-Router::post('/upload-font', [$fontController, 'uploadFont']);
-Router::delete('/delete-fonts/:id', function($params) use ($fontController) {
+Router::get('/api/fonts', [$fontController, 'listFonts']);
+Router::post('/api/upload-font', [$fontController, 'uploadFont']);
+Router::delete('/api/delete-font/:id', function($params) use ($fontController) {
     $fontController->deleteFont($params['id']);
 });
 
-Router::get('/groups', [$groupController, 'listGroups']);
-Router::post('/create-group', [$groupController, 'createGroup']);
-Router::delete('/delete-group/:id', function($params) use ($groupController) {
+Router::get('/api/groups', [$groupController, 'listGroups']);
+Router::post('/api/create-group', [$groupController, 'createGroup']);
+Router::delete('/api/delete-group/:id', function($params) use ($groupController) {
     $groupController->deleteGroup($params['id']);
 });

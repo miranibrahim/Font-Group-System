@@ -4,9 +4,11 @@ import Footer from "./Footer";
 
 function Root() {
     return (
-        <div className="">
+        <div className="h-screen">
             <Navbar></Navbar>
-            <Outlet></Outlet>
+            <div className="">
+                <Outlet></Outlet>
+            </div>
             <Footer></Footer>
         </div>
     );

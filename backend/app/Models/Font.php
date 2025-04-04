@@ -4,8 +4,15 @@ require_once __DIR__ . '/../Core/Database.php';
 class Font extends Database {
     public function getAllFonts() {
         $stmt = $this->pdo->query("SELECT * FROM fonts");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $fonts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+        foreach ($fonts as &$font) {
+            $font['url'] = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . '/uploads/' . $font['name'];
+        }
+    
+        return $fonts;
     }
+    
 
     public function uploadFont($name, $path) {
         
