@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import FontRows from '../Components/FontRows';
-import { deleteFont, getFonts } from '../utils/axiosInstance';
+import { deleteData, getData } from '../utils/axiosInstance';
 import UploadFont from './UploadFont';
 
 
@@ -12,7 +12,7 @@ function Home() {
     const loadFonts = async () => {
         try {
             setIsLoading(true);
-            const data = await getFonts('/fonts');
+            const data = await getData('/fonts');
             setFonts(data);
             setError(null);
         } catch (err) {
@@ -30,7 +30,7 @@ function Home() {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this font?')) {
             try {
-                await deleteFont(`/delete-font/${id}`);
+                await deleteData(`/delete-font/${id}`);
                 // Update the fonts list immediately after deletion
                 setFonts(fonts.filter(font => font.id !== id));
             } catch (err) {

@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { uploadFontFile } from '../utils/axiosInstance';
+import { postData } from '../utils/axiosInstance';
 
 
 function UploadFont() {
@@ -57,7 +57,7 @@ function UploadFont() {
             const formData = new FormData();
             formData.append('font', selectedFile);
 
-            const response = await uploadFontFile('/upload-font', formData);
+            const response = await postData('/upload-font', formData);
             setMessage({ type: 'success', text: 'Font uploaded successfully!' });
             setSelectedFile(null);
         } catch (error) {
