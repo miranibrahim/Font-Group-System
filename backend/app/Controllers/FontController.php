@@ -2,56 +2,104 @@
 require_once __DIR__ . '/../Models/Font.php';
 require_once __DIR__ . '/../Core/BaseController.php';
 
-class FontController extends BaseController {
+class FontController extends BaseController
+{
     private $fontModel;
+    private $cloudinary;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->fontModel = new Font();
+        // Import Cloudinary instance
+        $this->cloudinary = require_once __DIR__ . '/../../config/cloudinary.php';
     }
 
-    public function listFonts() {
+    public function listFonts()
+    {
         $this->sendResponse($this->fontModel->getAllFonts());
     }
 
-    public function uploadFont() {
+    public function uploadFont()
+    {
         if (!isset($_FILES['font'])) {
             $this->sendError('No file uploaded');
             return;
         }
-    
+
         $originalFontName = $_FILES['font']['name'];
-        
-        // Remove spaces from the font name
-        $fontName = str_replace(' ', '', $originalFontName);
-        
-        $fontPath = __DIR__ . '/../../uploads/' . $fontName;
-    
-        if (move_uploaded_file($_FILES['font']['tmp_name'], $fontPath)) {
-            $result = $this->fontModel->uploadFont($originalFontName, $fontPath);
-            
+        $tmpPath = $_FILES['font']['tmp_name'];
+
+        // First check if font already exists in database
+        $fontExists = $this->fontModel->checkFontExists($originalFontName);
+        if ($fontExists) {
+            $this->sendError('Font with this name already exists');
+            return;
+        }
+
+        try {
+            // Get filename without extension and extension separately
+            $filenameWithoutExt = pathinfo($originalFontName, PATHINFO_FILENAME);
+            $extension = pathinfo($originalFontName, PATHINFO_EXTENSION);
+
+            // Replace spaces with underscores in the filename
+            $filenameWithoutExt = str_replace(' ', '_', $filenameWithoutExt);
+
+            // Upload to Cloudinary with explicit file extension and underscores instead of spaces
+            $uploadResult = $this->cloudinary->uploadApi()->upload($tmpPath, [
+                'resource_type' => 'raw',
+                'folder' => 'fonts',
+                'public_id' => $filenameWithoutExt . '.' . $extension,
+                'use_filename' => true
+            ]);
+
+            $cloudinaryUrl = $uploadResult['secure_url'];
+            $publicId = $uploadResult['public_id'];
+
+            // Save to database with both URL and public_id
+            $result = $this->fontModel->uploadFont($originalFontName, $cloudinaryUrl, $publicId);
+
             if ($result['success']) {
-                $this->sendResponse(['success' => 'Font uploaded successfully', 'id' => $result['id']]);
-            } 
-            else {
-                if (file_exists($fontPath)) {
-                    unlink($fontPath);
-                }
+                $this->sendResponse([
+                    'success' => 'Font uploaded to Cloudinary',
+                    'id' => $result['id'],
+                    'url' => $cloudinaryUrl
+                ]);
+            } else {
+                // If database insertion fails, delete from Cloudinary
+                $this->cloudinary->uploadApi()->destroy($publicId, ['resource_type' => 'raw']);
                 $this->sendError($result['error']);
             }
-        } 
-        else {
-            $this->sendError('Failed to upload font');
+        } catch (Exception $e) {
+            $this->sendError('Cloudinary upload failed: ' . $e->getMessage());
         }
     }
 
-    public function deleteFont($id) {
-        
-        $result = $this->fontModel->deleteFont($id);
+    public function deleteFont($id)
+    {
+        // Get font details first to get the public_id
+        $font = $this->fontModel->getFontById($id);
 
-        if ($result) {
-            $this->sendResponse(['success' => 'Font deleted']);
-        } else {
-            $this->sendError('Failed to delete font or file not Exist.');
+        if (!$font) {
+            $this->sendError('Font not found');
+            return;
+        }
+
+        try {
+            // Delete from Cloudinary using the stored public_id
+            if (!empty($font['public_id'])) {
+                $this->cloudinary->uploadApi()->destroy($font['public_id'], ['resource_type' => 'raw']);
+            }
+
+            // Delete from database
+            $result = $this->fontModel->deleteFont($id);
+
+            if ($result) {
+                $this->sendResponse(['success' => 'Font deleted from database and Cloudinary']);
+            } else {
+                $this->sendError('Failed to delete font from database');
+            }
+        } catch (Exception $e) {
+            $this->sendError('Error during deletion: ' . $e->getMessage());
         }
     }
 }
