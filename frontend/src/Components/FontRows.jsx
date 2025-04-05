@@ -1,17 +1,15 @@
 function FontRow({ font, onDelete }) {
-  // Extract font name (without extension) for font-family
-  const fontName = font.name.replace(/\.ttf$/i, '').trim();
 
-  // Extract file name from URL (e.g., "HappySelfie.ttf")
-  const fontFileName = font.url.split('/').pop();
+  const fontName = font.name.replace(/\.ttf$/i, '').trim();
+  const url = font.path;
   console.log(fontName);
-  console.log(fontFileName);
+  console.log(url);
 
   // Define the @font-face CSS rule
   const fontFaceStyle = `
     @font-face {
       font-family: "${fontName}";
-      src: url("/fonts/${fontFileName}") format("truetype");
+      src: url("${url}") format("truetype");
       font-weight: normal;
       font-style: normal;
     }
@@ -19,7 +17,6 @@ function FontRow({ font, onDelete }) {
 
   return (
     <>
-      {/* Inject @font-face for this font */}
       <style>{fontFaceStyle}</style>
 
       <tr className="border-b hover:bg-gray-50">
