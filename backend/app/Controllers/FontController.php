@@ -15,15 +15,19 @@ class FontController extends BaseController {
 
     public function uploadFont() {
         if (!isset($_FILES['font'])) {
-            $this->sendError( 'No file uploaded');
+            $this->sendError('No file uploaded');
             return;
         }
     
-        $fontName = $_FILES['font']['name'];
+        $originalFontName = $_FILES['font']['name'];
+        
+        // Remove spaces from the font name
+        $fontName = str_replace(' ', '', $originalFontName);
+        
         $fontPath = __DIR__ . '/../../uploads/' . $fontName;
     
         if (move_uploaded_file($_FILES['font']['tmp_name'], $fontPath)) {
-            $result = $this->fontModel->uploadFont($fontName, $fontPath);
+            $result = $this->fontModel->uploadFont($originalFontName, $fontPath);
             
             if ($result['success']) {
                 $this->sendResponse(['success' => 'Font uploaded successfully', 'id' => $result['id']]);
@@ -32,11 +36,11 @@ class FontController extends BaseController {
                 if (file_exists($fontPath)) {
                     unlink($fontPath);
                 }
-                $this->sendError( $result['error']);
+                $this->sendError($result['error']);
             }
         } 
         else {
-            $this->sendError( 'Failed to upload font');
+            $this->sendError('Failed to upload font');
         }
     }
 

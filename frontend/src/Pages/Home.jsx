@@ -3,7 +3,6 @@ import FontRows from '../Components/FontRows';
 import { deleteData, getData } from '../utils/axiosInstance';
 import UploadFont from './UploadFont';
 
-
 function Home() {
     const [fonts, setFonts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -40,6 +39,12 @@ function Home() {
         }
     };
 
+    // Function to handle successful font upload
+    const handleFontUploaded = () => {
+        // Reload fonts after successful upload
+        loadFonts();
+    };
+
     if (isLoading) {
         return <div className="text-center py-10">Loading fonts...</div>;
     }
@@ -57,7 +62,7 @@ function Home() {
                     <div className="text-center py-10 bg-gray-50 rounded">
                         No fonts available. Please upload some fonts.
                     </div>
-                    <UploadFont/>
+                    <UploadFont onSuccess={handleFontUploaded} />
                 </div>
             ) : (
                 <div className="overflow-auto">
@@ -83,6 +88,6 @@ function Home() {
             )}
         </div>
     );
-};
+}
 
 export default Home;

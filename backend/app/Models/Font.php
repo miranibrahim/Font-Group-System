@@ -5,9 +5,9 @@ class Font extends Database {
     public function getAllFonts() {
         $stmt = $this->pdo->query("SELECT * FROM fonts");
         $fonts = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+        
         foreach ($fonts as &$font) {
-            $font['url'] = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . '/uploads/' . $font['name'];
+            $font['url'] = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . '/uploads/' . str_replace(' ', '',$font['name']);
         }
     
         return $fonts;
