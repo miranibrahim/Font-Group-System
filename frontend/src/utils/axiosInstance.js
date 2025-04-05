@@ -62,4 +62,23 @@ export const createFontGroup = async (endpoint, formData) => {
   }
 };
 
+// Update data
+export const updateData = async (endpoint, id, data) => {
+  try {
+    const response = await axiosInstance.put(
+      `${endpoint}/${id}`,
+      JSON.stringify(data),
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating ${endpoint}/${id}:`, error);
+    throw error;
+  }
+};
+
 export default axiosInstance;

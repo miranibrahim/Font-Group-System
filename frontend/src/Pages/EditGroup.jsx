@@ -1,31 +1,55 @@
 import { useState, useEffect } from 'react';
-import { createFontGroup, getData,  } from '../utils/axiosInstance';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getData, updateData } from '../utils/axiosInstance';
 
-
-
-function CreateGroup() {
+function EditGroup() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    
     const [groupTitle, setGroupTitle] = useState('');
     const [fonts, setFonts] = useState([]);
-    const [fontRows, setFontRows] = useState([{ id: 1, fontId: '' }]);
+    const [fontRows, setFontRows] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [validationError, setValidationError] = useState('');
     const [successMsg, setSuccessMsg] = useState('');
 
+    // Fetch group data and all fonts
     useEffect(() => {
-        const loadFonts = async () => {
+        const loadData = async () => {
             try {
-                const data = await getData('/fonts');
-                setFonts(data);
+                setIsLoading(true);
+                // Load all fonts
+                const fontData = await getData('/fonts');
+                setFonts(fontData);
+                
+                // Load the specific group
+                const groupData = await getData(`/group/${id}`);
+                setGroupTitle(groupData.name);
+                
+                // Create font rows from the group's fonts
+                const initialFontRows = [];
+                const selectedFontIds = JSON.parse(groupData.fonts);
+                
+                selectedFontIds.forEach((fontId, index) => {
+                    initialFontRows.push({
+                        id: index + 1,
+                        fontId: fontId.toString()
+                    });
+                });
+                
+                setFontRows(initialFontRows);
                 setError(null);
             } catch (err) {
-                setError('Failed to load fonts.');
+                setError('Failed to load data. ' + err.message);
+                console.error('Load error:', err);
             } finally {
                 setIsLoading(false);
             }
         };
-        loadFonts();
-    }, []);
+        
+        loadData();
+    }, [id]);
 
     const handleAddRow = () => {
         if (fontRows.length >= fonts.length) return;
@@ -34,6 +58,10 @@ function CreateGroup() {
     };
 
     const handleRemoveRow = (id) => {
+        if (fontRows.length <= 2) {
+            setValidationError('A group must have at least 2 fonts');
+            return;
+        }
         setFontRows(fontRows.filter(row => row.id !== id));
     };
 
@@ -41,7 +69,7 @@ function CreateGroup() {
         setFontRows(fontRows.map(row => (row.id === id ? { ...row, [field]: value } : row)));
     };
 
-    const handleCreateGroup = async (e) => {
+    const handleUpdateGroup = async (e) => {
         e.preventDefault();
 
         const selectedFonts = fontRows.filter(row => row.fontId !== '');
@@ -57,38 +85,39 @@ function CreateGroup() {
 
         const payload = {
             name: groupTitle.trim(),
-            fonts: selectedFonts.map(row => parseInt(row.fontId, 10)), 
+            fonts: selectedFonts.map(row => parseInt(row.fontId, 10)),
         };
 
         try {
-            setValidationError('');            
-            const response = await createFontGroup('/create-group', payload);            
+            setValidationError('');
+            const response = await updateData('/update-group', id, payload);
 
             if (response?.success) {
-                alert('Font group created successfully!');
-                setGroupTitle('');
-                setFontRows([{ id: 1, fontId: '' }]); 
+                setSuccessMsg('Font group updated successfully!');
+                setTimeout(() => {
+                    navigate('/group-list');
+                }, 1500);
             } else {
-                setValidationError(response?.error || 'Failed to create group.');
+                setValidationError(response?.error || 'Failed to update group.');
             }
         } catch (error) {
             setValidationError('Something went wrong. Please try again.');
-            console.error('Group creation error:', error);
+            console.error('Group update error:', error);
         }
     };
 
-    if (isLoading) return <div className="text-center py-10">Loading fonts...</div>;
+    if (isLoading) return <div className="text-center py-10">Loading data...</div>;
     if (error) return <div className="text-center py-10 text-red-500">{error}</div>;
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-3xl">
-            <h1 className="text-xl font-bold mb-2">Create Font Group</h1>
+            <h1 className="text-xl font-bold mb-2">Edit Font Group</h1>
             <p className="text-sm text-gray-600 mb-4">You have to select at least two fonts</p>
 
             {validationError && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{validationError}</div>}
             {successMsg && <div className="mb-4 p-3 bg-green-100 text-green-700 rounded">{successMsg}</div>}
 
-            <form onSubmit={handleCreateGroup}>
+            <form onSubmit={handleUpdateGroup}>
                 <div className="mb-4">
                     <input
                         type="text"
@@ -135,7 +164,6 @@ function CreateGroup() {
                                         </option>
                                     ))}
                             </select>
-
                         </div>
                         <button
                             type="button"
@@ -157,16 +185,25 @@ function CreateGroup() {
                         + Add Row
                     </button>
 
-                    <button
-                        type="submit"
-                        className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
-                    >
-                        Create
-                    </button>
+                    <div className="space-x-2">
+                        <button
+                            type="button"
+                            className="border border-gray-300 text-gray-600 px-4 py-2 rounded hover:bg-gray-50"
+                            onClick={() => navigate('/group-list')}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+                        >
+                            Update
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
     );
 }
 
-export default CreateGroup;
+export default EditGroup;
