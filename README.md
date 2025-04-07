@@ -158,5 +158,3 @@ Font-group-system/
 - **Single Page Application**: All operations are performed without page reloads
 - **Validation**: Ensures proper file types (TTF only) and group requirements (minimum 2 fonts)
 
-
-This project is licensed under the MIT License - see the LICENSE file for details.
