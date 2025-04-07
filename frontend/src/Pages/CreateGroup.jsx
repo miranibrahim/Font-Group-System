@@ -63,6 +63,7 @@ function CreateGroup() {
         try {
             setValidationError('');            
             const response = await createFontGroup('/create-group', payload);            
+            console.log(payload);
 
             if (response?.success) {
                 alert('Font group created successfully!');

@@ -9,10 +9,12 @@ class GroupController extends BaseController {
         $this->groupModel = new Group();
     }
 
+    // Getting all group list
     public function listGroups() {
         $this->sendResponse($this->groupModel->getAllGroups());
     }
 
+    // Getting individual group by id
     public function getGroupById($id) {
         $group = $this->groupModel->getGroupById($id);
         
@@ -23,28 +25,23 @@ class GroupController extends BaseController {
         }
     }
 
+    // Create function for group
     public function createGroup() {
         $data = json_decode(file_get_contents("php://input"), true);
         
-        // Validate input data
+        // Check group name is provided or not
         if (!isset($data['name']) || empty($data['name'])) {
             $this->sendError("Group name is required");
             return;
         }
         
+        // Check at leat 2 fonts is uploaded or not
         if (!isset($data['fonts']) || !is_array($data['fonts']) || count($data['fonts']) < 2) {
             $this->sendError("A group must have at least 2 fonts");
             return;
         }
-        
-        // Check if all font IDs are numeric
-        foreach ($data['fonts'] as $fontId) {
-            if (!is_numeric($fontId)) {
-                $this->sendError("Invalid font ID format");
-                return;
-            }
-        }
-        
+
+        // insert group into db
         $result = $this->groupModel->createGroup($data['name'], $data['fonts']);
         
         if ($result['success']) {
@@ -54,8 +51,10 @@ class GroupController extends BaseController {
         }
     }
 
+    // Delete Group
     public function deleteGroup($id) {
 
+        // delete from db
         $result = $this->groupModel->deleteGroup($id);
 
         if ($result) {
@@ -66,29 +65,23 @@ class GroupController extends BaseController {
     }
 
     
-    
+    // Update Group
     public function updateGroup($id) {
         $data = json_decode(file_get_contents("php://input"), true);
         
-        // Validate input data
+        // Check Group Name is provided or not
         if (!isset($data['name']) || empty($data['name'])) {
             $this->sendError("Group name is required");
             return;
         }
         
+        // Check at least 2 fonts are selected or not
         if (!isset($data['fonts']) || !is_array($data['fonts']) || count($data['fonts']) < 2) {
             $this->sendError("A group must have at least 2 fonts");
             return;
         }
         
-        // Check if all font IDs are numeric
-        foreach ($data['fonts'] as $fontId) {
-            if (!is_numeric($fontId)) {
-                $this->sendError("Invalid font ID format");
-                return;
-            }
-        }
-        
+        // saving to db
         $result = $this->groupModel->updateGroup($id, $data['name'], $data['fonts']);
         
         if ($result['success']) {
