@@ -29,7 +29,7 @@ function FontRow({ font, onDelete }) {
         <td className="py-3 px-4">
           <button
             onClick={() => onDelete(font.id)}
-            className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded"
+            className="bg-red-500 hover:bg-red-600 text-white py-1 px-1 rounded text-xs font-bold"
           >
             Delete
           </button>
