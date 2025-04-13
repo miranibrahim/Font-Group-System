@@ -10,9 +10,13 @@ $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
 // Get env variables
-$cloudName = $_ENV['CLOUDINARY_CLOUD_NAME'] ?? '';
-$apiKey = $_ENV['CLOUDINARY_API_KEY'] ?? '';
-$apiSecret = $_ENV['CLOUDINARY_API_SECRET'] ?? '';
+// $cloudName = $_ENV['CLOUDINARY_CLOUD_NAME'] ?? '';
+// $apiKey = $_ENV['CLOUDINARY_API_KEY'] ?? '';
+// $apiSecret = $_ENV['CLOUDINARY_API_SECRET'] ?? '';
+
+$cloudName = "dgil8iylw";
+$apiKey = "736626463566797";
+$apiSecret = "gWnXNf7M3ZPRT63GaNctTDoujOY";
 
 // Create Cloudinary instance
 return new Cloudinary(

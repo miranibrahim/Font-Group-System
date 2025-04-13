@@ -8,4 +8,9 @@ class Database {
         global $pdo;
         $this->pdo = $pdo;
     }
+    
+    // Add a method to close connection if needed
+    public function close() {
+        $this->pdo = null;
+    }
 }
