@@ -29,9 +29,16 @@ All operations are performed without page reloads, providing a smooth user exper
 Font-group-system/
 ├── backend/
 │   ├── app/
-│   │   └── Controllers/
-│   │       ├── FontController.php
-│   │       └── GroupController.php
+│   │   ├── Controllers/
+│   │   │   ├── FontController.php
+│   │   │   └── GroupController.php
+│   │   ├── Config/
+│   │   │   ├── BaseController.php
+│   │   │   ├── Database.php
+│   │   │   └── Router.php
+│   │   └── Models/
+│   │       ├── Font.php
+│   │       └── Group.php
 │   ├── config/
 │   │   ├── cloudinary.php
 │   │   └── config.php
@@ -40,8 +47,15 @@ Font-group-system/
 │   ├── public/
 │   │   ├── index.php
 │   │   └── routes.php
-│   └── vendor/
+│   ├── vendor/
+│   │   └── ... (cloudinary files)
+│   ├── .env
+│   ├── .gitignore
+│   ├── .htaccess
+│   ├── composer.json
+│   └── composer.lock
 ├── frontend/
+│   ├── node_modules/
 │   ├── public/
 │   ├── src/
 │   │   ├── Components/
@@ -57,10 +71,18 @@ Font-group-system/
 │   │   │   ├── GroupList.jsx
 │   │   │   ├── Home.jsx
 │   │   │   └── UploadFont.jsx
-│   │   └── utils/
+│   │   ├── utils/
 │   │   │   └── axiosInstance.js
-│   │   └── main.jsx
-│   └── .env.local
+│   │   ├── main.jsx
+│   │   ├── App.css
+│   │   └── index.css
+│   ├── .env.local
+│   ├── .gitignore
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   └── vite.config.json
 └── README.md
 ```
 
