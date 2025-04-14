@@ -12,6 +12,8 @@ The Font Group Management System allows users to:
 
 All operations are performed without page reloads, providing a smooth user experience.
 
+You can check the live version of the project here: [Font Group Management System](https://fontfolio-group.vercel.app)
+
 ## 🛠️ Tech Stack
 
 **Backend:**
@@ -54,6 +56,7 @@ Font-group-system/
 │   ├── .htaccess
 │   ├── composer.json
 │   └── composer.lock
+│
 ├── frontend/
 │   ├── node_modules/
 │   ├── public/
@@ -99,6 +102,9 @@ Font-group-system/
 - Edit existing font groups
 - Remove font groups
 
+
+You can include the SQL commands in your `README.md` under the **Database Setup** section for clarity. Here's the updated section with the SQL commands included:
+
 ## 🚀 Installation & Setup
 
 ### Prerequisites
@@ -108,76 +114,88 @@ Font-group-system/
 - Composer
 
 ### Backend Setup
-1. Clone the repository
-   ```
+1. Clone the repository:
+   ```bash
    git clone https://github.com/yourusername/Font-group-system.git
    cd Font-group-system/backend
    ```
 
-2. Install dependencies
-   ```
+2. Install dependencies:
+   ```bash
    composer install
    ```
 
-3. Configure environment
-   ```
-   cp .env.example .env
-   ```
-   Edit the `.env` file with your database and Cloudinary credentials
+3. Configure environment:
+   - Copy the example environment file:
+     ```bash
+     cp .env.example .env
+     ```
+   - Edit the `.env` file with your database and Cloudinary credentials.
 
-4. Run database migrations
-   ```
-   php migrate.php
-   ```
+4. Create the required database tables in MySQL:
+   - Log into your MySQL server:
+     ```bash
+     mysql -u your_username -p
+     ```
+   - Create the database (if not already created):
+     ```sql
+     CREATE DATABASE font_group_system;
+     USE font_group_system;
+     ```
 
-5. Start the PHP server
-   ```
+   - Run the following SQL commands to create the tables:
+
+     ```sql
+     CREATE TABLE `font_groups` (
+       `id` int NOT NULL AUTO_INCREMENT,
+       `name` varchar(255) NOT NULL,
+       `fonts` text NOT NULL,
+       PRIMARY KEY (`id`)
+     ) DEFAULT CHARSET=utf8mb4 
+     COLLATE=utf8mb4_general_ci;
+
+     CREATE TABLE `fonts` (
+       `id` int NOT NULL AUTO_INCREMENT,
+       `name` varchar(255) NOT NULL,
+       `path` varchar(255) NOT NULL,
+       `public_id` varchar(255) DEFAULT NULL,
+       PRIMARY KEY (`id`)
+     ) DEFAULT CHARSET=utf8mb4 
+     COLLATE=utf8mb4_general_ci;
+     ```
+
+5. Start the PHP server:
+   ```bash
    php -S localhost:8000 -t public
    ```
 
 ### Frontend Setup
-1. Navigate to frontend directory
-   ```
+1. Navigate to the `frontend` directory:
+   ```bash
    cd ../frontend
    ```
 
-2. Install dependencies
-   ```
+2. Install dependencies:
+   ```bash
    npm install
    ```
 
-3. Configure environment
-   ```
-   cp .env.example .env.local
-   ```
-   Edit the `.env.local` file with your API URL
+3. Configure environment:
+   - Copy the example environment file:
+     ```bash
+     cp .env.example .env.local
+     ```
+   - Edit the `.env.local` file with your API URL:
+     ```bash
+     VITE_API_BASE_URL=http://localhost:8000/api
+     ```
 
-4. Start the development server
-   ```
+4. Start the development server:
+   ```bash
    npm run dev
    ```
 
 5. Access the application at `http://localhost:5173`
+```
 
-## 💻 Usage
-
-1. **Upload Fonts**
-   - Drag and drop TTF files or click to upload
-   - View uploaded fonts with preview functionality
-
-2. **Create Font Groups**
-   - Select at least two fonts from the uploaded list
-   - Add more rows as needed for additional fonts
-   - Name your font group and save
-
-3. **Manage Groups**
-   - View all created font groups
-   - Edit existing groups to add or remove fonts
-   - Delete groups that are no longer needed
-
-## 📝 Implementation Details
-
-- **SOLID Principles**: The project follows SOLID design principles for maintainable and scalable code
-- **Single Page Application**: All operations are performed without page reloads
-- **Validation**: Ensures proper file types (TTF only) and group requirements (minimum 2 fonts)
-
+Now, when you set up your backend, make sure to run the provided SQL commands in MySQL to create the necessary `font_groups` and `fonts` tables.

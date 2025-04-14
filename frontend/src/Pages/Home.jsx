@@ -41,7 +41,6 @@ function Home() {
 
     // Function to handle successful font upload
     const handleFontUploaded = () => {
-        // Reload fonts after successful upload
         loadFonts();
     };
 
