@@ -2,8 +2,6 @@ function FontRow({ font, onDelete }) {
 
   const fontName = font.name.replace(/\.ttf$/i, '').trim();
   const url = font.path;
-  console.log(fontName);
-  console.log(url);
 
   // Define the @font-face CSS rule
   const fontFaceStyle = `
